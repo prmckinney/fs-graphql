@@ -7,6 +7,7 @@ const GET_AUTHORS = gql`
       name
       born
       bookCount
+      id
     }
   }
 `;
@@ -16,7 +17,6 @@ const Authors = (props) => {
   if (!props.show) {
     return null;
   }
-  console.log("result ==> ", result);
 
   if (result.loading) {
     return <div>loading...</div>;
