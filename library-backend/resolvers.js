@@ -98,12 +98,6 @@ const resolvers = {
         if (author) return Book.find({ author: author.id, genres: args.genre });
         else return null;
       }
-
-      // if (args.genre)
-      //   return booksFiltered.filter((book) =>
-      //     book.genres.find((genre) => genre === args.genre),
-      //   );
-      // else return booksFiltered;
     },
     allAuthors: async () => {
       return Author.find({});
@@ -121,41 +115,29 @@ const resolvers = {
   },
   Mutation: {
     addBook: async (root, args) => {
-      console.log("args ==> ", args);
       const authorExists = await Author.findOne({ name: args.author });
-      console.log("authorExists ==> ", authorExists);
-
       if (!authorExists) {
         const author = new Author({ name: args.author });
-
         try {
           await author.save();
         } catch (error) {
-          throw new GraphQLError(`Saving author failed: ${error.message}`, {
+          throw new GraphQLError(`Adding author failed: ${error.message}`, {
             extensions: {
               code: "BAD_USER_INPUT",
-              invalidArgs: args.name,
               error,
             },
           });
         }
-        console.log("author ==> ", author);
       }
 
       const author_id = await Author.findOne({ name: args.author });
-      // const id = author_id._id;
-      console.log("authorID ==> ", author_id);
-
       const book = new Book({ ...args, author: author_id });
-      console.log("book ==> ", book);
-
       try {
         await book.save();
       } catch (error) {
-        throw new GraphQLError(`Saving book failed: ${error.message}`, {
+        throw new GraphQLError(`Adding book failed: ${error.message}`, {
           extensions: {
             code: "BAD_USER_INPUT",
-            invalidArgs: args.name,
             error,
           },
         });
@@ -164,18 +146,19 @@ const resolvers = {
       return book;
     },
 
-    // addBooks: (root, args) => {
-    //   if (!authors.find((author) => author.name === args.author)) {
-    //     const newAuthor = { name: args.author, id: uuid() };
-    //     authors = authors.concat(newAuthor);
-    //   }
-    //   const newBook = { ...args, id: uuid() };
-    //   books = books.concat(newBook);
-    //   return newBook;
-    // },
-    editAuthor: (root, args) => {
-      const author = authors.find((author) => author.name === args.name);
+    editAuthor: async (root, args) => {
+      const author = await Author.findOne({ name: args.name });
       if (author) author.born = args.setBornTo;
+      try {
+        await author.save();
+      } catch (error) {
+        throw new GraphQLError(`Updating author failed: ${error.message}`, {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            error,
+          },
+        });
+      }
       return author;
     },
     reset: async () => {
