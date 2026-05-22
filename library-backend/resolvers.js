@@ -85,20 +85,25 @@ const resolvers = {
     authorCount: () => authors.length,
     bookCount: () => books.length,
     allBooks: async (root, args) => {
-      const value = await Book.find({});
+      if (!args.author && !args.genre) {
+        return Book.find({});
+      } else if (args.author && !args.genre) {
+        const author = await Author.findOne({ name: args.author });
+        if (author) return Book.find({ author: author.id });
+        else return null;
+      } else if (!args.author && args.genre) {
+        return Book.find({ genres: args.genre });
+      } else if (args.author && args.genre) {
+        const author = await Author.findOne({ name: args.author });
+        if (author) return Book.find({ author: author.id, genres: args.genre });
+        else return null;
+      }
 
-      return Book.find({});
-
-      let booksFiltered;
-      if (args.author)
-        booksFiltered = books.filter((book) => book.author === args.author);
-      else booksFiltered = [...books];
-
-      if (args.genre)
-        return booksFiltered.filter((book) =>
-          book.genres.find((genre) => genre === args.genre),
-        );
-      else return booksFiltered;
+      // if (args.genre)
+      //   return booksFiltered.filter((book) =>
+      //     book.genres.find((genre) => genre === args.genre),
+      //   );
+      // else return booksFiltered;
     },
     allAuthors: async () => {
       return Author.find({});
