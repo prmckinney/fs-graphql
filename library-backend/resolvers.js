@@ -42,8 +42,10 @@ const resolvers = {
     },
   },
   Author: {
-    bookCount: (root) => {
-      return Book.filter((book) => book.author === root.name).length;
+    bookCount: async (root) => {
+      const author = await Author.findOne({ name: root.name });
+      const books = await Book.find({ author: author });
+      return books.length;
     },
   },
   Mutation: {
