@@ -9,8 +9,14 @@ const resolvers = {
     me: (root, args, context) => {
       return context.currentUser;
     },
-    authorCount: () => authors.length,
-    bookCount: () => books.length,
+    authorCount: async () => {
+      const authors = await Author.find({});
+      return authors.length;
+    },
+    bookCount: async () => {
+      const books = await Book.find({});
+      return books.length;
+    },
     allBooks: async (root, args) => {
       if (!args.author && !args.genre) {
         return Book.find({});
@@ -125,22 +131,28 @@ const resolvers = {
       }
 
       const author = await Author.findOne({ name: args.name });
-      if (author) author.born = args.setBornTo;
-      try {
-        await author.save();
-      } catch (error) {
-        throw new GraphQLError(`Updating author failed: ${error.message}`, {
-          extensions: {
-            code: "BAD_USER_INPUT",
-            error,
-          },
-        });
+      if (author) {
+        author.born = args.setBornTo;
+        try {
+          await author.save();
+        } catch (error) {
+          throw new GraphQLError(`Updating author failed: ${error.message}`, {
+            extensions: {
+              code: "BAD_USER_INPUT",
+              error,
+            },
+          });
+        }
       }
       return author;
     },
-    reset: async () => {
+    _resetDatabase: async () => {
+      if (process.env.NODE_ENV !== "test") {
+        throw new GraphQLError("_resetDatabase is only available in test mode");
+      }
       await Author.deleteMany({});
       await Book.deleteMany({});
+      await User.deleteMany({});
       return true;
     },
   },
