@@ -5,6 +5,7 @@ import { LOGIN } from "../queries";
 const LoginForm = ({ show, setPage, setToken }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const [login] = useMutation(LOGIN, {
     onCompleted: (data) => {
@@ -16,7 +17,7 @@ const LoginForm = ({ show, setPage, setToken }) => {
     },
     onError: (error) => {
       console.log("error ==> ", error);
-      //setError(error.message);
+      setError(error.message);
     },
   });
 
@@ -31,21 +32,26 @@ const LoginForm = ({ show, setPage, setToken }) => {
 
   return (
     <div>
+      {error ? <div>{error}</div> : null}
       <form onSubmit={submit}>
         <div>
-          username{" "}
-          <input
-            value={username}
-            onChange={({ target }) => setUsername(target.value)}
-          />
+          <label>
+            username
+            <input
+              value={username}
+              onChange={({ target }) => setUsername(target.value)}
+            />
+          </label>
         </div>
         <div>
-          password{" "}
-          <input
-            type="password"
-            value={password}
-            onChange={({ target }) => setPassword(target.value)}
-          />
+          <label>
+            password
+            <input
+              type="password"
+              value={password}
+              onChange={({ target }) => setPassword(target.value)}
+            />
+          </label>
         </div>
         <button type="submit">login</button>
       </form>

@@ -35,6 +35,9 @@ const resolvers = {
     allAuthors: async () => {
       return Author.find({});
     },
+    allGenres: async () => {
+      return Book.distinct("genres");
+    },
   },
   Book: {
     author: async (root) => {

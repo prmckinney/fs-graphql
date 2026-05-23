@@ -20,7 +20,7 @@ export const EDIT_AUTHOR = gql`
   }
 `;
 
-export const GET_BOOKS = gql`
+export const GET_ALL_BOOKS = gql`
   query AllBooks {
     allBooks {
       title
@@ -31,6 +31,21 @@ export const GET_BOOKS = gql`
       published
       id
     }
+  }
+`;
+
+export const GET_BOOKS = gql`
+  query AllBooks($genre: String) {
+    allBooks(genre: $genre) {
+      title
+      author {
+        name
+        born
+      }
+      published
+      id
+    }
+    allGenres
   }
 `;
 
@@ -53,6 +68,21 @@ export const ADD_BOOK = gql`
       }
       published
       genres
+    }
+  }
+`;
+
+export const GET_GENRES = gql`
+  query AllGenres {
+    allGenres
+  }
+`;
+
+export const GET_USER = gql`
+  query Me {
+    me {
+      username
+      favoriteGenre
     }
   }
 `;
