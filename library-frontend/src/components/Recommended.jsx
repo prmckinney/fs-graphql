@@ -2,17 +2,17 @@ import { useQuery } from "@apollo/client/react";
 import { GET_BOOKS, GET_USER } from "../queries";
 
 const Recommended = (props) => {
-  const { data: user } = useQuery(GET_USER);
+  const { data: user } = useQuery(GET_USER, { fetchPolicy: "no-cache" });
   const result = useQuery(GET_BOOKS, {
     skip: !user,
-    variables: { genre: user?.me.favoriteGenre },
+    variables: { genre: user?.me?.favoriteGenre },
   });
 
   if (!props.show) {
     return null;
   }
 
-  if (result.loading) {
+  if (result.loading || !user) {
     return <div>loading...</div>;
   }
 
@@ -20,9 +20,9 @@ const Recommended = (props) => {
 
   return (
     <div>
-      <h2>Recommendations</h2>
+      <h2>recommendations</h2>
       <div>
-        Books in your favorite genre <b>{user?.me.favoriteGenre}</b>
+        Books in your favorite genre <b>{user?.me?.favoriteGenre}</b>
       </div>
       <table>
         <tbody>

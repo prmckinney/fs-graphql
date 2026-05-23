@@ -1,18 +1,19 @@
 import { useState } from "react";
 import { useMutation } from "@apollo/client/react";
-import { LOGIN } from "../queries";
+import { useApolloClient } from "@apollo/client/react";
+import { LOGIN, GET_USER } from "../queries";
 
 const LoginForm = ({ show, setPage, setToken }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const client = useApolloClient();
 
   const [login] = useMutation(LOGIN, {
     onCompleted: (data) => {
-      console.log("data ==> ", data);
       const token = data.login.value;
-      setToken(token);
       localStorage.setItem("library-user-token", token);
+      setToken(token);
       setPage("authors");
     },
     onError: (error) => {
@@ -25,14 +26,15 @@ const LoginForm = ({ show, setPage, setToken }) => {
     return null;
   }
 
-  const submit = (event) => {
+  const submit = async (event) => {
     event.preventDefault();
-    login({ variables: { username, password } });
+    await login({ variables: { username, password } });
+    client.resetStore();
   };
 
   return (
     <div>
-      {error ? <div>{error}</div> : null}
+      {error ? <div>login failed: {error}</div> : null}
       <form onSubmit={submit}>
         <div>
           <label>

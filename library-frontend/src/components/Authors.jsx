@@ -26,8 +26,6 @@ const Authors = (props) => {
   const submit = async (event) => {
     event.preventDefault();
 
-    console.log("name ==> ", name);
-    console.log("dateBorn ==> ", dateBorn);
     editAuthor({
       variables: { name, setBornTo: Number(dateBorn) },
     });
@@ -62,9 +60,9 @@ const Authors = (props) => {
           <h2>Set Birthyear</h2>
           <form onSubmit={submit}>
             <div>
-              <label>
-                name
+              <div>
                 <select
+                  name="name"
                   value={name}
                   onChange={({ target }) => setName(target.value)}
                 >
@@ -74,7 +72,7 @@ const Authors = (props) => {
                     </option>
                   ))}
                 </select>
-              </label>
+              </div>
             </div>
             <div>
               <label>

@@ -20,20 +20,6 @@ export const EDIT_AUTHOR = gql`
   }
 `;
 
-export const GET_ALL_BOOKS = gql`
-  query AllBooks {
-    allBooks {
-      title
-      author {
-        name
-        born
-      }
-      published
-      id
-    }
-  }
-`;
-
 export const GET_BOOKS = gql`
   query AllBooks($genre: String) {
     allBooks(genre: $genre) {

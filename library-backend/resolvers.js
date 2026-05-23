@@ -6,7 +6,7 @@ const Book = require("./models/book");
 
 const resolvers = {
   Query: {
-    me: (root, args, context) => {
+    me: async (root, args, context) => {
       return context.currentUser;
     },
     authorCount: async () => {
